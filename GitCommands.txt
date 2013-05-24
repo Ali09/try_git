@@ -1,0 +1,144 @@
+In order to maintain some sort of authorship, 
+it's important to do the following when running git for the first time:
+	git config --global user.name "Your Name"
+       	git config --global user.email "user@domain.com"
+	
+Initialize a local repository in a given directory:
+	git init
+
+Basic Local Commands:
+	git add	'file'		-> Add file to the stage
+				   Tracks the file if it's the first time added
+	git rm 'file'		-> Stop tracking a file
+	git commit -m 'message' -> Commit the stage to the repository
+	git mv 'from' 'to'	-> Move or rename a previously added file
+	git status		-> Prints which files are on and off the stage
+				   (also prints which files are not tracked)
+
+Viewing Old Commits:
+	git log			-> Provides a history of all commits: 
+				   (Commit Code #, Author, Date)
+				   
+Edit log output format with arguments; 'pretty print':
+	git log --pretty=oneline --max-count=2
+	git log --pretty=oneline --since='5 minutes ago'
+	git log --pretty=oneline --until='5 minutes ago'
+	git log --pretty=oneline --author=<your name>
+	git log --pretty=oneline --all
+	git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short	
+
+Retreiving Old Commits from log codes, 'going back in time':
+	git checkout 'Commit #' -> Repository reverts to state of a hash code 'Commit #'
+	git checkout filename   -> Repository reverts only the specified file
+				   to most recent commit (discards changes since then)
+
+Example using some simple commands:
+	// Suppose we have a new directory with 'hello.txt',
+	// which contains the text "Hello World".
+	// We want to setup a git repo to track changes to 'hello.txt'
+	
+	$ git init 	    		// initialize repository
+	$ git add 'hello.txt' 		// add 'hello.txt' to be tracked by git
+	$ git commit -m 'First Commit'	// commited 'hello.txt'
+
+	// Let's say someone changes 'hello.txt' to contain
+	// "yolo swag" instead of "Hello World".
+	// You want to revert it back
+
+	$ git log			// shows us 'First Commit', along with the
+					// 40-bit hexadecimal commit code, aka 'Hash Code'
+					// i.e. 1f7ec5eaa8f37c2770dae3b984c55a1531fcc9e7 
+					// however, you can use the first seven
+					// characters or so for simplicity: 1f7ec5e
+	
+	$ git checkout 1f7ec5e		// 'hello.txt' now contains 
+					// "Hello World"
+
+	// To get around nasty hash codes, you can 'tag' different
+	// commits with names
+
+	$ git tag hello			// our first commit is now tagged with
+					// 'hello', which we can use instead
+					// of the hash code now
+
+	// Say someone edits 'hello.txt' again, you want to revert it back
+
+	$ git checkout hello		// we can now use 'hello' instead of
+					// looking through our history and
+					// using the hash code
+
+	// With the previous two checkouts, the repository reverted to the state
+	// of 'First Commit'; however, if we had other files in the repo,
+	// those files would be reverted to their 'First Commit' state as well.
+	// Suppose again that 'hello.txt' is changed, 
+	// and you only wanted to revert 'hello.txt'
+
+	$ git checkout hello.txt	// 'hello.txt' reverts, discarding any
+					// edits made since the previous commit
+
+This pretty much covers the very basics for local repositories.
+Look into Branching and Merging for heavier git usage.
+
+Connecting to a remote repository (one on github):
+	$ git clone [url]	-> copies an exisiting repository
+				   into your current working directory
+				   ([url] would be the HTTP link
+				    in github)
+	
+	$ git remote add [shortname] [url]
+				-> connects to a remote repository at [url],
+				   which can now be referenced with the
+				   [shortname] provided, which by convention
+				   is usually 'origin'
+
+Sending and receiving data from a remote repository:
+	$ git pull		-> pulls down all data from the remote repo,
+				   updating files in your local working
+				   directory
+				  
+				note:
+				   if you wish to download the updated files
+				   without altering your local working
+				   directory, you can use 
+				   'git fetch [shortname]' along with
+				   branching to view the files
+				   
+	$ git push		-> shares your commits with the remote
+				   repository; they are now available
+				   to any user who 'git pull's from the repo
+				   
+				note: 
+				 
+				1) running 'git push -u [shortname] master' 
+				   allows you to simply type 'git push' 
+				   without typing out the shortname 
+				   in the future
+				   
+				2) You have to make sure you've 'git pull'ed the
+				   most recent state of the repo if you want
+				   to be able to 'git push'
+				   
+Example using some remote commands:
+	// Suppose we want to connect to a remote github
+	// repo with url : https://github.com/project/stuff.git
+	// we want to copy all of the files on the repo, and
+	// replace the text of "Hello World" with "yolo swag" in
+	// the file 'hello.txt' that we copied from the repo
+
+	$ git clone https://github.com/project/stuff.git	
+	// copies all files and commits into the working directory
+
+	// we've edit the newly added 'hello.txt' to contain "yolo swag"
+	// and want to send it to the server
+	// we first have to commit it locally, then push the commit
+
+	$ git add hello.txt		
+	$ git commit -m 'i is funny'	// commited 'hello.txt'
+	
+	$ git push -u origin master	// sent our commit to the remote repo
+					// we'll only need to type git push
+					// without '-u origin master' in the
+					// future
+	
+	
+	
